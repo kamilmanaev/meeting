@@ -5,13 +5,16 @@ function Pagination({ currentPage, handleChangePage, pageSize, count }) {
   const pages = _.range(1, pageCount + 1);
   return (
     <nav className="d-flex justify-content-center">
-      <ul class="pagination">
+      <ul className="pagination">
         {pages.map((page) => (
           <li
             className={"page-item " + (page === currentPage ? "active" : "")}
             key={page}
           >
-            <button class="page-link" onClick={() => handleChangePage(page)}>
+            <button
+              className="page-link"
+              onClick={() => handleChangePage(page)}
+            >
               {page}
             </button>
           </li>

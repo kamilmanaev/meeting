@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import API from "../API";
 import paginate from "../utils/paginate";
 import Pagination from "./pagination";
+import Bookmark from "./bookmark";
 export const Users = () => {
   const [users, setUsers] = useState(API.users.fetchAll());
   const [currentPage, setCurrentPage] = useState(1);
@@ -13,37 +14,8 @@ export const Users = () => {
   function handleChangePage(pageIndex) {
     setCurrentPage(pageIndex);
   }
-
-  /*   function changeBookMark(bookmark) {
-    if (bookmark) {
-      return    <td>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="currentColor"
-          className="bi bi-bookmark"
-          viewBox="0 0 16 16"
-        >
-          <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z" />
-        </svg>
-      </td>;
-    } else {
-      return (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="currentColor"
-          class="bi bi-bookmark-fill"
-          viewBox="0 0 16 16"
-        >
-          <path d="M2 2v13.5a.5.5 0 0 0 .74.439L8 13.069l5.26 2.87A.5.5 0 0 0 14 15.5V2a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2" />
-        </svg>
-      );
-    }
-  } */
   //функция для определения окончания
+
   function renderPhrase() {
     if (
       users.length === 0 ||
@@ -58,6 +30,16 @@ export const Users = () => {
   const deleteUser = (id) => {
     setUsers(users.filter((item) => id !== item._id));
   };
+  function handleTogleBookmark(id) {
+    setUsers(
+      users.map((user) => {
+        if (user._id === id) {
+          return { ...user, bookmark: !user.bookmark };
+        } else return user;
+      })
+    );
+  }
+  console.log(users);
   return (
     <>
       <h1>
@@ -97,7 +79,13 @@ export const Users = () => {
                 <td>{item.profession.name}</td>
                 <td>{item.completedMeetings}</td>
                 <td>{item.rate}</td>
-                <td>{/* {changeBookMark()} */}</td>
+                <td>
+                  <Bookmark
+                    handleTogleBookmark={handleTogleBookmark}
+                    id={item._id}
+                    status={item.bookmark}
+                  />
+                </td>
                 <td>
                   <button
                     type="button"
