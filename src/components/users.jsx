@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import API from "../API";
 import paginate from "../utils/paginate";
 import Pagination from "./pagination";
-import Bookmark from "./bookmark";
+import AllUsers from "./user";
+import Search_status from "./search-status";
 export const Users = () => {
   const [users, setUsers] = useState(API.users.fetchAll());
   const [currentPage, setCurrentPage] = useState(1);
@@ -15,7 +16,6 @@ export const Users = () => {
     setCurrentPage(pageIndex);
   }
   //функция для определения окончания
-
   function renderPhrase() {
     if (
       users.length === 0 ||
@@ -27,6 +27,7 @@ export const Users = () => {
       if (users.length % 10 <= 4) return "человека";
     }
   }
+
   const deleteUser = (id) => {
     setUsers(users.filter((item) => id !== item._id));
   };
@@ -39,16 +40,10 @@ export const Users = () => {
       })
     );
   }
-  console.log(users);
+  console.log(userCrop);
   return (
     <>
-      <h1>
-        <span
-          className={"badge " + (users.length > 0 ? "bg-primary" : "bg-danger")}
-        >
-          {users.length} {renderPhrase()} тусанет с тобою
-        </span>
-      </h1>
+      {/* <Search_status numOfPeople={users.length} renderPhrase={renderPhrase} /> */}
       {users.length > 0 && (
         <table className="table">
           <thead>
@@ -62,45 +57,16 @@ export const Users = () => {
               <th scope="col">удалить</th>
             </tr>
           </thead>
-          <tbody>
-            {userCrop.map((item) => (
-              <tr key={item._id}>
-                <td>{item.name}</td>
-                <td>
-                  {item.qualities.map((quality) => (
-                    <span
-                      className={`badge bg-${quality.color}`}
-                      key={quality._id}
-                    >
-                      {quality.name}
-                    </span>
-                  ))}
-                </td>
-                <td>{item.profession.name}</td>
-                <td>{item.completedMeetings}</td>
-                <td>{item.rate}</td>
-                <td>
-                  <Bookmark
-                    handleTogleBookmark={handleTogleBookmark}
-                    id={item._id}
-                    status={item.bookmark}
-                  />
-                </td>
-                <td>
-                  <button
-                    type="button"
-                    className="btn btn-danger"
-                    onClick={() => {
-                      deleteUser(item._id);
-                      length = users.length;
-                    }}
-                  >
-                    удалить
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
+          <AllUsers
+            users={users}
+            userCrop={userCrop}
+            handleTogleBookmark={handleTogleBookmark}
+            deleteUser={deleteUser}
+            length={length}
+            pageSize={pageSize}
+            currentPage={currentPage}
+            paginate={paginate}
+          />
         </table>
       )}
       <Pagination
