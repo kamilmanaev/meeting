@@ -1,17 +1,29 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import API from "../API";
 import paginate from "../utils/paginate";
 import Pagination from "./pagination";
 import AllUsers from "./user";
 import SearchStatus from "./search-status";
+import { GroupList } from "./group-list";
 
 export const Users = () => {
   const [users, setUsers] = useState(API.users.fetchAll());
+  const [professions, setProfessions] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedProfession, setSelectedProfession] = useState();
   const pageSize = 4;
-  let length = users.length;
 
-  let userCrop = paginate(users, pageSize, currentPage);
+  useEffect(() => {
+    API.professions.fetchAll().then((data) => setProfessions(data));
+  }, []);
+  const filteredUsers = selectedProfession
+    ? users.filter((user) => user.profession === selectedProfession)
+    : users;
+  let userCrop = paginate(filteredUsers, pageSize, currentPage);
+  let length = filteredUsers.length;
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedProfession]);
 
   function handleChangePage(pageIndex) {
     setCurrentPage(pageIndex);
@@ -30,9 +42,20 @@ export const Users = () => {
       })
     );
   }
+  function handleSelectProfession(params) {
+    setSelectedProfession(params);
+  }
+  console.log(userCrop);
   return (
     <>
-      <SearchStatus numOfPeople={users.length} />
+      <SearchStatus numOfPeople={users.length} />{" "}
+      {professions && (
+        <GroupList
+          items={professions}
+          onClick={handleSelectProfession}
+          selectedProfession={selectedProfession}
+        />
+      )}
       {users.length > 0 && (
         <table className="table">
           <thead>
