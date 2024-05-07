@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import API from "../API";
 import paginate from "../utils/paginate";
 import Pagination from "./pagination";
@@ -7,12 +7,17 @@ import SearchStatus from "./search-status";
 
 export const Users = () => {
   const [users, setUsers] = useState(API.users.fetchAll());
+  const [professions, setProfessions] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 4;
   let length = users.length;
 
+  useEffect(() => {
+    API.professions.fetchAll().then((data) => setProfessions(data));
+  }, []);
   let userCrop = paginate(users, pageSize, currentPage);
 
+  console.log(professions);
   function handleChangePage(pageIndex) {
     setCurrentPage(pageIndex);
   }
