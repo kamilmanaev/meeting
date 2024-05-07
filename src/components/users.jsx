@@ -3,30 +3,20 @@ import API from "../API";
 import paginate from "../utils/paginate";
 import Pagination from "./pagination";
 import AllUsers from "./user";
-import Search_status from "./search-status";
+import SearchStatus from "./search-status";
+
 export const Users = () => {
   const [users, setUsers] = useState(API.users.fetchAll());
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 4;
   let length = users.length;
-  let pages = [];
+
   let userCrop = paginate(users, pageSize, currentPage);
 
   function handleChangePage(pageIndex) {
     setCurrentPage(pageIndex);
   }
   //функция для определения окончания
-  function renderPhrase() {
-    if (
-      users.length === 0 ||
-      users.length % 10 === 1 ||
-      (users.length > 4 && users.length < 15)
-    )
-      return "человек";
-    else {
-      if (users.length % 10 <= 4) return "человека";
-    }
-  }
 
   const deleteUser = (id) => {
     setUsers(users.filter((item) => id !== item._id));
@@ -40,10 +30,9 @@ export const Users = () => {
       })
     );
   }
-  console.log(userCrop);
   return (
     <>
-      {/* <Search_status numOfPeople={users.length} renderPhrase={renderPhrase} /> */}
+      <SearchStatus numOfPeople={users.length} />
       {users.length > 0 && (
         <table className="table">
           <thead>
@@ -57,16 +46,22 @@ export const Users = () => {
               <th scope="col">удалить</th>
             </tr>
           </thead>
-          <AllUsers
-            users={users}
-            userCrop={userCrop}
-            handleTogleBookmark={handleTogleBookmark}
-            deleteUser={deleteUser}
-            length={length}
-            pageSize={pageSize}
-            currentPage={currentPage}
-            paginate={paginate}
-          />
+          <tbody>
+            {userCrop.map((user) => (
+              <AllUsers
+                key={user._id}
+                handleTogleBookmark={handleTogleBookmark}
+                deleteUser={deleteUser}
+                id={user._id}
+                profession={user.profession.name}
+                completedmeetings={user.completedMeetings}
+                rate={user.rate}
+                bookmark={user.bookmark}
+                name={user.name}
+                qualities={user.qualities}
+              />
+            ))}
+          </tbody>
         </table>
       )}
       <Pagination

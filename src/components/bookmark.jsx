@@ -1,6 +1,6 @@
 import React from "react";
+import PropTypes from "prop-types";
 function Bookmark({ handleTogleBookmark, id, status }) {
-  console.log(id);
   return (
     <i
       className={"bi bi-bookmark" + (status ? "-fill" : "")}
@@ -8,9 +8,9 @@ function Bookmark({ handleTogleBookmark, id, status }) {
     ></i>
   );
 }
-Bookmark.protoTypes = {
+Bookmark.propTypes = {
   handleTogleBookmark: PropTypes.func,
-  id: PropTypes.number,
+  id: PropTypes.string,
   status: PropTypes.bool,
 };
 export default Bookmark;

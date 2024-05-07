@@ -1,57 +1,65 @@
 import React from "react";
 import Bookmark from "./bookmark";
 import Quality from "./quality";
-function AllUsers(
-  users,
-  userCrop,
+import PropTypes from "prop-types";
+function AllUsers({
   handleTogleBookmark,
   deleteUser,
-  length,
-  pageSize,
-  currentPage
-) {
+  id,
+  profession,
+  completedmeetings,
+  rate,
+  bookmark,
+  name,
+  qualities,
+}) {
   return (
-    <tbody>
-      {userCrop.map((item) => (
-        <tr key={item._id}>
-          <td>{item.name}</td>
-          <td>
-            {item.qualities.map((quality) => (
-              <Quality quality={quality} />
-            ))}
-          </td>
-          <td>{item.profession.name}</td>
-          <td>{item.completedMeetings}</td>
-          <td>{item.rate}</td>
-          <td>
-            <Bookmark
-              handleTogleBookmark={handleTogleBookmark}
-              id={item._id}
-              status={item.bookmark}
-            />
-          </td>
-          <td>
-            <button
-              type="button"
-              className="btn btn-danger"
-              onClick={() => {
-                deleteUser(item._id);
-                length = users.length;
-              }}
-            >
-              удалить
-            </button>
-          </td>
-        </tr>
-      ))}
-    </tbody>
+    <tr>
+      <td>{name}</td>
+      <td>
+        {qualities.map((quality) => (
+          <Quality key={quality._id} quality={quality} />
+        ))}
+      </td>
+      <td>{profession}</td>
+      <td>{completedmeetings}</td>
+      <td>{rate}</td>
+      <td>
+        <Bookmark
+          handleTogleBookmark={handleTogleBookmark}
+          id={id}
+          status={bookmark}
+        />
+      </td>
+      <td>
+        <button
+          type="button"
+          className="btn btn-danger"
+          onClick={() => {
+            deleteUser(id);
+          }}
+        >
+          удалить
+        </button>
+      </td>
+    </tr>
   );
 }
-AllUsers.protoTypes = {
-  users: ProtoTypes.array,
-  userCrop: ProtoTypes.func,
-  handleTogleBookmark: ProtoTypes.func,
-  deleteUser: ProtoTypes.func,
-  length: ProtoTypes.number,
+AllUsers.propTypes = {
+  handleTogleBookmark: PropTypes.func,
+  deleteUser: PropTypes.func,
+  id: PropTypes.string,
+  profession: PropTypes.string,
+  completedmeetings: PropTypes.number,
+  rate: PropTypes.number,
+  bookmark: PropTypes.bool,
+  name: PropTypes.string,
+  qualities: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string,
+      name: PropTypes.string,
+      color: PropTypes.string,
+    })
+  ),
 };
 export default AllUsers;

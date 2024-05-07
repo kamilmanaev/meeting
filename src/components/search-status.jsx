@@ -1,5 +1,17 @@
 import React from "react";
-function Search_status(numOfPeople, renderPhrase) {
+import PropTypes from "prop-types";
+function SearchStatus({ numOfPeople }) {
+  function renderPhrase() {
+    if (
+      numOfPeople === 0 ||
+      numOfPeople % 10 === 1 ||
+      (numOfPeople > 4 && numOfPeople < 15)
+    )
+      return "человек";
+    else {
+      if (numOfPeople % 10 <= 4) return "человека";
+    }
+  }
   return (
     <h1>
       <span
@@ -10,8 +22,7 @@ function Search_status(numOfPeople, renderPhrase) {
     </h1>
   );
 }
-Search_status.propTypes = {
+SearchStatus.propTypes = {
   numOfPeople: PropTypes.number,
-  renderPhrase: PropTypes.func,
 };
-export default Search_status;
+export default SearchStatus;
