@@ -17,14 +17,21 @@ export const Users = () => {
     API.professions.fetchAll().then((data) => setProfessions(data));
   }, []);
   const filteredUsers = selectedProfession
-    ? users.filter((user) => user.profession === selectedProfession)
+    ? [...users].filter((user) => user.profession === selectedProfession)
     : users;
   let userCrop = paginate(filteredUsers, pageSize, currentPage);
-  let length = filteredUsers.length;
+  let count = filteredUsers.length;
+  useEffect(() => {
+    if (currentPage > Math.ceil(count / pageSize))
+      setCurrentPage(currentPage - 1);
+  }, [users, currentPage, count]);
   useEffect(() => {
     setCurrentPage(1);
   }, [selectedProfession]);
 
+  function clearFilter() {
+    setSelectedProfession();
+  }
   function handleChangePage(pageIndex) {
     setCurrentPage(pageIndex);
   }
@@ -45,54 +52,69 @@ export const Users = () => {
   function handleSelectProfession(params) {
     setSelectedProfession(params);
   }
-  console.log(userCrop);
   return (
-    <>
-      <SearchStatus numOfPeople={users.length} />{" "}
-      {professions && (
-        <GroupList
-          items={professions}
-          onClick={handleSelectProfession}
-          selectedProfession={selectedProfession}
+    <div className="d-flex">
+      {" "}
+      <div className="d-flex flex-column flex-shrink-0 p-3">
+        {professions && (
+          <>
+            <GroupList
+              items={professions}
+              onClick={handleSelectProfession}
+              selectedProfession={selectedProfession}
+            />
+            {
+              <button
+                onClick={() => clearFilter()}
+                className="btn btn-secondary"
+              >
+                Очистить
+              </button>
+            }
+          </>
+        )}
+      </div>
+      <div className="d-flex flex-column">
+        <SearchStatus numOfPeople={count} />
+        {count > 0 && (
+          <table className="table">
+            <thead>
+              <tr>
+                <th scope="col">Имя</th>
+                <th scope="col">Качества</th>
+                <th scope="col">Профессия</th>
+                <th scope="col">Встретиля, раз</th>
+                <th scope="col">Оценка</th>
+                <th scope="col">Избранное</th>
+                <th scope="col">удалить</th>
+              </tr>
+            </thead>
+            <tbody>
+              {userCrop.map((user) => (
+                <AllUsers
+                  key={user._id}
+                  handleTogleBookmark={handleTogleBookmark}
+                  deleteUser={deleteUser}
+                  id={user._id}
+                  profession={user.profession.name}
+                  completedmeetings={user.completedMeetings}
+                  rate={user.rate}
+                  bookmark={user.bookmark}
+                  name={user.name}
+                  qualities={user.qualities}
+                />
+              ))}
+            </tbody>
+          </table>
+        )}
+        <Pagination
+          currentPage={currentPage}
+          handleChangePage={handleChangePage}
+          pageSize={pageSize}
+          count={count}
+          setCurrentPage={setCurrentPage}
         />
-      )}
-      {users.length > 0 && (
-        <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">Имя</th>
-              <th scope="col">Качества</th>
-              <th scope="col">Профессия</th>
-              <th scope="col">Встретиля, раз</th>
-              <th scope="col">Оценка</th>
-              <th scope="col">Избранное</th>
-              <th scope="col">удалить</th>
-            </tr>
-          </thead>
-          <tbody>
-            {userCrop.map((user) => (
-              <AllUsers
-                key={user._id}
-                handleTogleBookmark={handleTogleBookmark}
-                deleteUser={deleteUser}
-                id={user._id}
-                profession={user.profession.name}
-                completedmeetings={user.completedMeetings}
-                rate={user.rate}
-                bookmark={user.bookmark}
-                name={user.name}
-                qualities={user.qualities}
-              />
-            ))}
-          </tbody>
-        </table>
-      )}
-      <Pagination
-        currentPage={currentPage}
-        handleChangePage={handleChangePage}
-        pageSize={pageSize}
-        count={length}
-      />
-    </>
+      </div>
+    </div>
   );
 };
