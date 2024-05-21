@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
+import _ from "lodash";
 import API from "../API";
 import paginate from "../utils/paginate";
 import Pagination from "./pagination";
 import AllUsers from "./user";
 import SearchStatus from "./search-status";
 import { GroupList } from "./group-list";
+import { UserTable } from "./user-table";
 
 export const Users = () => {
   const [users, setUsers] = useState([]);
@@ -12,6 +14,7 @@ export const Users = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedProfession, setSelectedProfession] = useState();
   const pageSize = 4;
+  const [sortBy, setSortBy] = useState({ iter: "name", order: "asc" });
 
   useEffect(() => {
     API.professions.fetchAll().then((data) => setProfessions(data));
@@ -26,8 +29,8 @@ export const Users = () => {
           JSON.stringify(user.profession) === JSON.stringify(selectedProfession)
       )
     : users;
-
-  let userCrop = paginate(filteredUsers, pageSize, currentPage);
+  const sortedUser = _.orderBy(filteredUsers, [sortBy.iter], [sortBy.order]);
+  let userCrop = paginate(sortedUser, pageSize, currentPage);
   let count = filteredUsers.length;
   useEffect(() => {
     if (currentPage > Math.ceil(count / pageSize))
@@ -44,6 +47,18 @@ export const Users = () => {
     setCurrentPage(pageIndex);
   }
   //функция для определения окончания
+
+  function handleSort(item) {
+    if (item !== sortBy.iter) {
+      setSortBy((prevState) => ({ ...prevState, iter: item }));
+    } else
+      setSortBy((prevState) => ({
+        ...prevState,
+        order: prevState.order == "asc" ? "desc" : "asc",
+      }));
+  }
+  console.log(sortBy);
+
   const deleteUser = (id) => {
     setUsers(users.filter((item) => id !== item._id));
   };
@@ -86,35 +101,12 @@ export const Users = () => {
       <div className="d-flex flex-column">
         <SearchStatus numOfPeople={count} />
         {count > 0 && (
-          <table className="table">
-            <thead>
-              <tr>
-                <th scope="col">Имя</th>
-                <th scope="col">Качества</th>
-                <th scope="col">Профессия</th>
-                <th scope="col">Встретиля, раз</th>
-                <th scope="col">Оценка</th>
-                <th scope="col">Избранное</th>
-                <th scope="col">удалить</th>
-              </tr>
-            </thead>
-            <tbody>
-              {userCrop.map((user) => (
-                <AllUsers
-                  key={user._id}
-                  handleTogleBookmark={handleTogleBookmark}
-                  deleteUser={deleteUser}
-                  id={user._id}
-                  profession={user.profession.name}
-                  completedmeetings={user.completedMeetings}
-                  rate={user.rate}
-                  bookmark={user.bookmark}
-                  name={user.name}
-                  qualities={user.qualities}
-                />
-              ))}
-            </tbody>
-          </table>
+          <UserTable
+            userCrop={userCrop}
+            handleTogleBookmark={handleTogleBookmark}
+            deleteUser={deleteUser}
+            handleSort={handleSort}
+          />
         )}
         <Pagination
           currentPage={currentPage}
