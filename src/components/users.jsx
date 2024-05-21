@@ -7,7 +7,7 @@ import SearchStatus from "./search-status";
 import { GroupList } from "./group-list";
 
 export const Users = () => {
-  const [users, setUsers] = useState(API.users.fetchAll());
+  const [users, setUsers] = useState([]);
   const [professions, setProfessions] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedProfession, setSelectedProfession] = useState();
@@ -16,9 +16,17 @@ export const Users = () => {
   useEffect(() => {
     API.professions.fetchAll().then((data) => setProfessions(data));
   }, []);
+  useEffect(() => {
+    API.users.fetchAll().then((data) => setUsers(data));
+  }, []);
+
   const filteredUsers = selectedProfession
-    ? [...users].filter((user) => user.profession === selectedProfession)
+    ? users.filter(
+        (user) =>
+          JSON.stringify(user.profession) === JSON.stringify(selectedProfession)
+      )
     : users;
+
   let userCrop = paginate(filteredUsers, pageSize, currentPage);
   let count = filteredUsers.length;
   useEffect(() => {
@@ -36,7 +44,6 @@ export const Users = () => {
     setCurrentPage(pageIndex);
   }
   //функция для определения окончания
-
   const deleteUser = (id) => {
     setUsers(users.filter((item) => id !== item._id));
   };
@@ -58,11 +65,13 @@ export const Users = () => {
       <div className="d-flex flex-column flex-shrink-0 p-3">
         {professions && (
           <>
-            <GroupList
-              items={professions}
-              onClick={handleSelectProfession}
-              selectedProfession={selectedProfession}
-            />
+            {
+              <GroupList
+                items={professions}
+                onClick={handleSelectProfession}
+                selectedProfession={selectedProfession}
+              />
+            }
             {
               <button
                 onClick={() => clearFilter()}
