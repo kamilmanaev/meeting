@@ -49,13 +49,7 @@ export const Users = () => {
   //функция для определения окончания
 
   function handleSort(item) {
-    if (item !== sortBy.iter) {
-      setSortBy((prevState) => ({ ...prevState, iter: item }));
-    } else
-      setSortBy((prevState) => ({
-        ...prevState,
-        order: prevState.order == "asc" ? "desc" : "asc",
-      }));
+    setSortBy(item);
   }
   console.log(sortBy);
 
@@ -105,7 +99,8 @@ export const Users = () => {
             userCrop={userCrop}
             handleTogleBookmark={handleTogleBookmark}
             deleteUser={deleteUser}
-            handleSort={handleSort}
+            onSort={handleSort}
+            selectedSort={sortBy}
           />
         )}
         <Pagination

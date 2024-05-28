@@ -1,49 +1,39 @@
 import React, { createFactory } from "react";
 import PropTypes from "prop-types";
 import AllUsers from "./user";
+import { TableHead } from "./table-head";
+import { TableBody } from "./table-body";
 export function UserTable({
   userCrop,
   handleTogleBookmark,
   deleteUser,
-  handleSort,
+  onSort,
+  selectedSort,
 }) {
+  function handleSort(item) {
+    if (item !== selectedSort.iter) {
+      onSort((prevState) => ({ ...prevState, iter: item }));
+    } else
+      onSort((prevState) => ({
+        ...prevState,
+        order: prevState.order == "asc" ? "desc" : "asc",
+      }));
+  }
+
+  const columns = {
+    name: { iter: "name", name: "Имя" },
+    qualities: { name: "Качества" },
+    profession: { iter: "profession.name", name: "Профессия" },
+    completedMeetings: { iter: "completedMeetings", name: "Встретился, раз" },
+    rate: { iter: "rate", name: "Оценка" },
+    bookmark: { iter: "bookmark", name: "Избранное" },
+    delete: {},
+  };
+
   return (
     <table className="table">
-      <thead>
-        <tr>
-          <th scope="col" onClick={() => handleSort("name")}>
-            Имя
-          </th>
-          <th scope="col">Качества</th>
-          <th scope="col" onClick={() => handleSort("profession.name")}>
-            Профессия
-          </th>
-          <th scope="col" onClick={() => handleSort("completedMeetings")}>
-            Встретиля, раз
-          </th>
-          <th scope="col" onClick={() => handleSort("rate")}>
-            Оценка
-          </th>
-          <th scope="col">Избранное</th>
-          <th scope="col">удалить</th>
-        </tr>
-      </thead>
-      <tbody>
-        {userCrop.map((user) => (
-          <AllUsers
-            key={user._id}
-            handleTogleBookmark={handleTogleBookmark}
-            deleteUser={deleteUser}
-            id={user._id}
-            profession={user.profession.name}
-            completedmeetings={user.completedMeetings}
-            rate={user.rate}
-            bookmark={user.bookmark}
-            name={user.name}
-            qualities={user.qualities}
-          />
-        ))}
-      </tbody>
+      <TableHead handleSort={handleSort} columns={columns} />
+      <TableBody data={userCrop} columns={columns} />
     </table>
   );
 }
@@ -51,5 +41,5 @@ UserTable.proptTypes = {
   userCrop: PropTypes.array,
   handleTogleBookmark: PropTypes.func,
   deleteUser: PropTypes.func,
-  handleSort: PropTypes.func,
+  onSort: PropTypes.func,
 };
