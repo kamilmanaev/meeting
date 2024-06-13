@@ -11,6 +11,14 @@ export const TableHead = ({ columns, onSort, selectedSort }) => {
     }
   }
 
+  function handleSortArrow(selectedSort, currentPath) {
+    if (selectedSort.iter === currentPath) {
+      if (selectedSort.order == "asc") {
+        return <i className="bi bi-caret-down-fill"></i>;
+      } else return <i className="bi bi-caret-up-fill"></i>;
+    }
+  }
+
   return (
     <thead>
       <tr>
@@ -23,7 +31,8 @@ export const TableHead = ({ columns, onSort, selectedSort }) => {
             }
             role={columns[column].iter && "button"}
           >
-            {/* columns[column].name  */ console.log(columns[column].iter)}{" "}
+            {columns[column].name}{" "}
+            {handleSortArrow(selectedSort, columns[column].iter)}{" "}
           </th>
         ))}
       </tr>

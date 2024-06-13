@@ -3,10 +3,14 @@ import PropTypes from "prop-types";
 import AllUsers from "./user";
 import { TableHead } from "./table-head";
 import { TableBody } from "./table-body";
+import QualitiesList from "./qualities-list";
 export function UserTable({ userCrop, onSort, selectedSort }) {
   const columns = {
     name: { iter: "name", name: "Имя" },
-    qualities: { name: "Качества" },
+    qualities: {
+      name: "Качества",
+      component: (user) => <QualitiesList qualities={user.qualities} />,
+    },
     profession: { iter: "profession.name", name: "Профессия" },
     completedMeetings: { iter: "completedMeetings", name: "Встретился, раз" },
     rate: { iter: "rate", name: "Оценка" },
@@ -15,12 +19,12 @@ export function UserTable({ userCrop, onSort, selectedSort }) {
   };
   return (
     <table className="table">
-      <TableHead columns={columns} onSort={onSort} />
-      <TableBody
-        data={userCrop}
+      <TableHead
         columns={columns}
+        onSort={onSort}
         selectedSort={selectedSort}
       />
+      <TableBody data={userCrop} columns={columns} />
     </table>
   );
 }
