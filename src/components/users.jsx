@@ -49,9 +49,9 @@ export const Users = () => {
   //функция для определения окончания
 
   function handleSort(item) {
+    console.log(item);
     setSortBy(item);
   }
-  console.log(sortBy);
 
   const deleteUser = (id) => {
     setUsers(users.filter((item) => id !== item._id));

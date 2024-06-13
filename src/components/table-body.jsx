@@ -2,7 +2,9 @@ import React from "react";
 import AllUsers from "./user";
 import { object } from "prop-types";
 import _ from "lodash";
+import PropTypes from "prop-types";
 export const TableBody = ({ data, columns }) => {
+  console.log(data);
   return (
     <tbody>
       {data.map((item) => (
@@ -14,4 +16,9 @@ export const TableBody = ({ data, columns }) => {
       ))}
     </tbody>
   );
+};
+
+TableBody.propTypes = {
+  data: PropTypes.array,
+  columns: PropTypes.object,
 };

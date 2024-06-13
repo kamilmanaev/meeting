@@ -3,23 +3,7 @@ import PropTypes from "prop-types";
 import AllUsers from "./user";
 import { TableHead } from "./table-head";
 import { TableBody } from "./table-body";
-export function UserTable({
-  userCrop,
-  handleTogleBookmark,
-  deleteUser,
-  onSort,
-  selectedSort,
-}) {
-  function handleSort(item) {
-    if (item !== selectedSort.iter) {
-      onSort((prevState) => ({ ...prevState, iter: item }));
-    } else
-      onSort((prevState) => ({
-        ...prevState,
-        order: prevState.order == "asc" ? "desc" : "asc",
-      }));
-  }
-
+export function UserTable({ userCrop, onSort, selectedSort }) {
   const columns = {
     name: { iter: "name", name: "Имя" },
     qualities: { name: "Качества" },
@@ -29,11 +13,14 @@ export function UserTable({
     bookmark: { iter: "bookmark", name: "Избранное" },
     delete: {},
   };
-
   return (
     <table className="table">
-      <TableHead handleSort={handleSort} columns={columns} />
-      <TableBody data={userCrop} columns={columns} />
+      <TableHead columns={columns} onSort={onSort} />
+      <TableBody
+        data={userCrop}
+        columns={columns}
+        selectedSort={selectedSort}
+      />
     </table>
   );
 }
@@ -41,5 +28,5 @@ UserTable.proptTypes = {
   userCrop: PropTypes.array,
   handleTogleBookmark: PropTypes.func,
   deleteUser: PropTypes.func,
-  onSort: PropTypes.func,
+  handleSort: PropTypes.func,
 };
