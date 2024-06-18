@@ -4,7 +4,14 @@ import AllUsers from "./user";
 import { TableHead } from "./table-head";
 import { TableBody } from "./table-body";
 import QualitiesList from "./qualities-list";
-export function UserTable({ userCrop, onSort, selectedSort }) {
+import Bookmark from "./bookmark";
+export function UserTable({
+  userCrop,
+  onSort,
+  selectedSort,
+  deleteUser,
+  handleTogleBookmark,
+}) {
   const columns = {
     name: { iter: "name", name: "Имя" },
     qualities: {
@@ -14,8 +21,30 @@ export function UserTable({ userCrop, onSort, selectedSort }) {
     profession: { iter: "profession.name", name: "Профессия" },
     completedMeetings: { iter: "completedMeetings", name: "Встретился, раз" },
     rate: { iter: "rate", name: "Оценка" },
-    bookmark: { iter: "bookmark", name: "Избранное" },
-    delete: {},
+    bookmark: {
+      iter: "bookmark",
+      name: "Избранное",
+      component: (user) => (
+        <Bookmark
+          handleTogleBookmark={handleTogleBookmark}
+          id={user._id}
+          status={user.bookmark}
+        />
+      ),
+    },
+    delete: {
+      component: (user) => (
+        <button
+          type="button"
+          className="btn btn-danger"
+          onClick={() => {
+            deleteUser(user._id);
+          }}
+        >
+          Удалить
+        </button>
+      ),
+    },
   };
   return (
     <table className="table">
